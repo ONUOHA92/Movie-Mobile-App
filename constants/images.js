@@ -1,0 +1,9 @@
+// export const backgroundImage = require('../assets/BG.png');
+// export const cameraIcon = require('../assets/camera-icon.png');
+// export const icon = require('../assets/icon.jpg');
+// export const logo = require('../assets/logo.png');
+export const movie5 = require('../assets/movie5.jpg');
+export const movie4 = require('../assets/movie4.jpg');
+export const frame3 = require('../assets/movie3.jpg');
+export const movie2 = require('../assets/movie2.jpg');
+export const movie1 = require('../assets/movie.jpg')
