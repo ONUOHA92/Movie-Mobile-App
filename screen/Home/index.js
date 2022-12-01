@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Box, AspectRatio, Stack, Heading, HStack } from 'native-base'
-// import axios from "axios";
-import { View, Text, Button, StyleSheet, SafeAreaView, FlatList, Image } from 'react-native';
+import { Box, AspectRatio, Stack, Heading, HStack } from 'native-base';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    View, Text,
+    StyleSheet,
+    SafeAreaView,
+    FlatList,
+    Image,
+    ActivityIndicator,
+    TouchableOpacity
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { API_KEYS, API_URL, IMAGE_URL } from "../../constants";
-import { LIGHT_BLUE, SECONDARY_COLOR } from "../../constants/color";
+import { LIGHT_BLUE } from "../../constants/color";
+import ROUTES from "../../constants/routes";
 
 
-
-const Item = ({ title, backdrop_path, release_date, popularity }) => (
+const Item = ({ title, backdrop_path, release_date, popularity, }) => (
     <View style={styles.title}>
         <Box >
             <Box max="80" rounded={'lg'} overflow="hidden" borderColor="coolGray.200" borderWidth={'1'}>
@@ -42,56 +50,68 @@ const Item = ({ title, backdrop_path, release_date, popularity }) => (
                 </Stack>
             </Box>
         </Box>
+
     </View>
+
 );
+
+
 
 function Home({ navigation }) {
     const [fetchmovie, setFetchmovie] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+    // console.log(fetchmovie)
 
+    const navigateToDetails = item => {
+        navigation.navigate(ROUTES.DETAIL, item);
+    };
     const renderItem = ({ item }) => (
-        <Item title={item.title}
-            release_date={item.release_date}
-            backdrop_path={`${IMAGE_URL}/original/${item.backdrop_path}`}
-            poster_path={`${IMAGE_URL}/original/${item.poster_path}`}
-            popularity={item.popularity}
-        />
+        <TouchableOpacity onPress={() => navigateToDetails(item)}>
+            <Item title={item.title}
+                release_date={item.release_date}
+                backdrop_path={`${IMAGE_URL}/original/${item.backdrop_path}`}
+                poster_path={`${IMAGE_URL}/original/${item.poster_path}`}
+                popularity={item.popularity}
+
+            />
+        </TouchableOpacity>
     );
 
     useEffect(() => {
-        getRecipes()
+        getMovies()
     }, [])
 
-    // &language=en-US&page=1
-    const getRecipes = async () => {
+
+    const getMovies = async () => {
         try {
             const response = await fetch(`${API_URL}movie/popular?api_key=${API_KEYS}`)
             const data = await response.json()
             setFetchmovie(data.results)
+            setLoading(false);
         } catch (error) {
             console.log(error)
         }
     }
 
     return (
-
         <SafeAreaView style={styles.container}>
             <StatusBar />
             <View style={styles.content}>
                 <View style={{ marginTop: 20, }}>
-                    <Text style={{ textAlign: 'center', fontSize: 20, color: LIGHT_BLUE }}>Movie Dashboard</Text>
+                    <Text style={{ textAlign: 'center', fontSize: 20, color: LIGHT_BLUE }}>Home</Text>
                 </View>
 
-                <FlatList
-                    style={styles.flatList}
-                    data={fetchmovie}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />
+                {isLoading ?
+                    <View style={styles.indicator}>
+                        <ActivityIndicator color="#8E24AA" size="large" />
+                    </View>
+                    : <FlatList
+                        style={styles.flatList}
+                        data={fetchmovie}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                    />}
             </View>
-
-
-
-
         </SafeAreaView>
 
     );
@@ -117,7 +137,13 @@ const styles = StyleSheet.create({
     flatList: {
         marginTop: 2,
         paddingHorizontal: 10,
-        // marginBottom: 4
+    },
+    indicator: {
+        flex: 1,
+        marginVertical: '70%',
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 20
     }
 
 })
