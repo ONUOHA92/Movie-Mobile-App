@@ -60,7 +60,7 @@ const Item = ({ title, backdrop_path, release_date, popularity, }) => (
 function Home({ navigation }) {
     const [fetchmovie, setFetchmovie] = useState([]);
     const [isLoading, setLoading] = useState(true);
-    // console.log(fetchmovie)
+    console.log(fetchmovie)
 
     const navigateToDetails = item => {
         navigation.navigate(ROUTES.DETAIL, item);

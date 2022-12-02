@@ -1,5 +1,5 @@
-import react, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import react, { useEffect, useState, useContext } from 'react';
+import { View, Text, StatusBar, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Box, AspectRatio, Stack, Heading, HStack } from 'native-base';
@@ -8,27 +8,30 @@ import { LIGHT_BLUE } from "../../constants/color";
 import { IMAGE_URL } from "../../constants";
 import ROUTES from "../../constants/routes";
 
-
+import { FavouriteContext } from '../../context/ContextFavourite'
 
 function DetailScreen({ navigation, route }) {
-    const [data, setData] = useState([])
+    const { data, setData } = useContext(FavouriteContext);
+
+    const dataId = data.params;
+
+
+
+
+
+
+
     useEffect(() => {
         getData()
-
     }, []);
-
-
-
-
-
-    const navigateToFavoourite = data => {
-        navigation.navigate(ROUTES.FAVOURITE, data);
-    };
 
     const storeData = async () => {
         try {
             const value = JSON.stringify(route);
-            AsyncStorage.setItem('@movie', value)
+            AsyncStorage.setItem('@movie', value);
+            Alert.alert(
+
+                'Added to Favourite Sucessfully');
         } catch (error) {
             console.log(error)
         }
@@ -36,13 +39,45 @@ function DetailScreen({ navigation, route }) {
 
     const getData = async () => {
         try {
-
             const info = await AsyncStorage.getItem('@movie')
             setData(JSON.parse(info))
         } catch (error) {
             console.log(error)
         }
     }
+
+    const deleteData = async () => {
+        try {
+            const result = await AsyncStorage.getItem('@movie');
+            let dataInfo = []
+            if (result !== null) dataInfo = JSON.parse(result);
+            const newData = dataInfo.filter(d => d.id !== dataId.id);
+            await AsyncStorage.setItem('@movie', JSON.stringify(newData));
+            navigation.goBack();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    const displayDeleteAlert = () => {
+        Alert.alert(
+            'Are you Sure!',
+            'This action will delete Favourite perminently',
+            [{
+                text: 'Delete',
+                onPress: () => deleteData
+            }, {
+                text: 'No thanks',
+                onPress: () => console.log('No thanks')
+
+            }
+            ], {
+            cancelable: true
+        }
+        )
+    }
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -86,21 +121,20 @@ function DetailScreen({ navigation, route }) {
                         </HStack>
 
 
-
                         <View style={styles.Favorite}>
                             <TouchableOpacity onPress={storeData}>
                                 <AntDesign name="save" size={24} color="green" />
                                 <Text>Favorite</Text>
                             </TouchableOpacity>
 
-                            <View>
+                            <TouchableOpacity onPress={displayDeleteAlert}>
                                 <AntDesign name="delete" size={24} color="red" />
                                 <Text>Delete</Text>
-                            </View>
+                            </TouchableOpacity>
 
                         </View>
 
-                        <TouchableOpacity style={styles.center} onPress={() => navigateToFavoourite(data)}>
+                        <TouchableOpacity style={styles.center} onPress={() => navigation.navigate(ROUTES.FAVOURITE)}>
                             <Text>Favorite</Text>
                         </TouchableOpacity>
                     </Box>

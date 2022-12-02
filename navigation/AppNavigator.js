@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
 import AuthStack from './stack/AuthStack';
-import TabNavigator from './TabNavigator';
 import ROUTES from '../constants/routes';
 
 const Stack = createNativeStackNavigator();
@@ -18,7 +17,7 @@ export default function AppNavigator() {
                 headerShown: false,
             })}>
             <Stack.Screen name={ROUTES.SPLASH} component={AuthStack} />
-            <Stack.Screen name={ROUTES.HOME} component={TabNavigator} />
+
 
         </Stack.Navigator>
     );

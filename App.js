@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { NativeBaseProvider } from 'native-base'
+import { NativeBaseProvider } from 'native-base';
 import AppNavigator from './navigation/AppNavigator';
+import { FavouriteContextProvider } from './context/ContextFavourite'
 
 
 
@@ -10,8 +11,10 @@ export default function App() {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <NativeBaseProvider >
-          <AppNavigator />
+        <NativeBaseProvider>
+          <FavouriteContextProvider>
+            <AppNavigator />
+          </FavouriteContextProvider>
         </NativeBaseProvider>
       </NavigationContainer>
     </View>
